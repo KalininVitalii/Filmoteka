@@ -1,41 +1,42 @@
-import { Component } from 'react';
 import style from './Modal.module.css';
+import { useEffect } from 'react';
 
-export class Model extends Component {
-  closeByEsc = e => {
-    if (e.code === 'Escape') {
-      this.props.closeModal();
-    }
-  };
+export const Model = ({ image: { src, alt }, closeModal }) => {
+  useEffect(() => {
+    const closeByEsc = e => {
+      if (e.code === 'Escape') {
+        closeModal();
+      }
+    };
+    window.addEventListener('keydown', closeByEsc);
 
-  closeByBackdropClick = e => {
+    return () => {
+      window.removeEventListener('keydown', closeByEsc);
+    };
+  }, [closeModal]);
+
+  const closeByBackdropClick = e => {
     if (e.currentTarget === e.target) {
-      this.props.closeModal();
+      closeModal();
     }
   };
 
-  componentDidMount() {
-    window.addEventListener('keydown', this.closeByEsc);
-  }
+  // componentDidMount() {
+  //   window.addEventListener('keydown', this.closeByEsc);
+  // }
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.closeByEsc);
-  }
+  // componentWillUnmount() {
+  //   window.removeEventListener('keydown', this.closeByEsc);
+  // }
 
-  render() {
-    const {
-      image: { src, alt },
-      closeModal,
-    } = this.props;
-    return (
-      <div className={style.backdrop} onClick={this.closeByBackdropClick}>
-        <div className={style.modal}>
-          <img src={`https://image.tmdb.org/t/p/w500${src}`} alt={alt} />
-          <button onClick={closeModal} className={style.closeBtn} type="button">
-            Close
-          </button>
-        </div>
+  return (
+    <div className={style.backdrop} onClick={closeByBackdropClick}>
+      <div className={style.modal}>
+        <img src={`https://image.tmdb.org/t/p/w500${src}`} alt={alt} />
+        <button onClick={closeModal} className={style.closeBtn} type="button">
+          Close
+        </button>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
